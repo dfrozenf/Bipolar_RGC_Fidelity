@@ -30,7 +30,9 @@ def main():
                                    alpha = 0.5))
     ax.set_xlim(0, max(mySpikes['Timestamp']))
     ax.set_ylim(0, len(myUnits))
+    ax.set_title(input('Name this graph: '))
     fig.show()
+
 
 def read_spiketrains():
     print('Select a sorted recording')
@@ -46,3 +48,6 @@ def sort_spiketrains(spikes):
     unit_list = unit_list.sort_values(ascending = False)
     unit_list = unit_list.index.to_list()
     return unit_list
+
+if __name__ == '__main__':
+    main()
