@@ -60,6 +60,14 @@ for i in range(len(unit_list)-1):
               format(unit_list[i], unit_list[j], c_, np.argmax(c)))
         corr_beforestim[j, i] = c_
 
+mask = np.zeros_like(corr_beforestim)
+mask[np.triu_indices_from(mask)] = True
+
+plt.title('Correlation Before Stim (-150 ms to 0 ms)')
+g = sns.heatmap(corr_beforestim, mask=mask, vmax=.3, square=True)
+g.set_facecolor('xkcd:white')
+plt.show()
+
 for i in range(len(unit_list)-1):
     control1 = control[control['Units'] == unit_list[i]]
     for j in range(i+1,len(unit_list)):
@@ -80,14 +88,6 @@ for i in range(len(unit_list)-1):
         print("Correlated post-stim signals from units {} and {}: \n Correlation of {} at lag = {} ms".\
               format(unit_list[i], unit_list[j], c_, np.argmax(c)))
         corr_afterstim[j, i] = c_
-
-mask = np.zeros_like(corr_beforestim)
-mask[np.triu_indices_from(mask)] = True
-
-plt.title('Correlation Before Stim (-150 ms to 0 ms)')
-g = sns.heatmap(corr_beforestim, mask=mask, vmax=.3, square=True)
-g.set_facecolor('xkcd:white')
-plt.show()
 
 plt.title('Correlation After Stim ( +20 ms to + 50 ms)')
 g = sns.heatmap(corr_afterstim, mask=mask, vmax=.3, square=True)
