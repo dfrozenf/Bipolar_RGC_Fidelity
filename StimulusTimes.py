@@ -1,27 +1,29 @@
 import numpy as np
 from tkinter.filedialog import askopenfilename
 
+
 def read_lightbins(filepath):
     with open(filepath, 'r') as f:
         input = f.readlines()
     input = input[4:]
     input = [i.rstrip().split('\t') for i in input]
-    input = np.array(input).reshape((len(input),3))
-    time = input[:,1]
+    input = np.array(input).reshape((len(input),5))
+    nTr_Time = input[:,1]
+    time = input[:,2]
+    nTr_Time = [float(i) for i in nTr_Time]
     time = [float(i) for i in time]
-    return time
+    return [nTr_Time,time]
 
 def calc_lightbins(TTL):
-    lighton = []
-    lightoff = []
-    i = 1
-    while i < len(TTL):
-        if TTL[i]-TTL[i-1] >= 4:
-            lighton.append(TTL[i-1])
-            lightoff.append(TTL[i])
-        i += 1
-    lights = np.array([lighton, lightoff]).reshape((2, len(lighton))).transpose()
-
+    lights = []
+    trial_times = list(sorted(list(set(TTL[0]))))
+    for t in trial_times:
+        indices = [i for i, x in enumerate(TTL[0]) if x == t]
+        timeon = TTL[1][min(indices)]
+        timeoff = TTL[1][max(indices)]
+        light = [t, timeon, timeoff, timeoff-timeon]
+        light = [float(i)/1000 for i in light]
+        lights.append(light)
     return lights
 
 def main():

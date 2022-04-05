@@ -6,11 +6,8 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 
 def main():
-    params = {"Lights": int(input('Light? (1/0)'))}
 
-    if params["Lights"] == 1:
-        print('Select a trigger file')
-        myLights = StimulusTimes.main()/1000
+    myLights = StimulusTimes.main()
 
     mySpikes = read_spiketrains()
     myUnits = sort_spiketrains(mySpikes)
@@ -18,27 +15,30 @@ def main():
     fig, ax = plt.subplots(1,1)
     for i in range(len(mySpikes)):
         ax.plot(mySpikes['Timestamp'][i],
-                 myUnits.index(mySpikes['Unit'][i]),
-                 marker = '|', color = 'black')
+                 mySpikes['Units'][i],
+                 marker = 'o', color = 'black')
 
-    if params["Lights"] == 1:
-        for i in range(len(myLights)):
-            ax.add_patch(Rectangle((myLights[i][0],0),
-                                   (myLights[i][1]-myLights[i][0]),
-                                   len(myUnits),
-                                   color = 'blue',
-                                   alpha = 0.5))
+
+    for i in range(len(myLights)):
+        ax.add_patch(Rectangle((myLights[i][1],0),
+                               (myLights[i][2]-myLights[1][0]),
+                               max(mySpikes['Units']),
+                               color = 'blue',
+                               alpha = 0.5))
     ax.set_xlim(0, max(mySpikes['Timestamp']))
-    ax.set_ylim(0, len(myUnits))
+    ax.set_ylim(0, max(mySpikes['Units']))
     ax.set_title(input('Name this graph: '))
+    #ax.vlines([2044.7, 3538.0], ymin=0, ymax=88, color = 'red')
     fig.show()
-
 
 def read_spiketrains():
     print('Select a sorted recording')
     filepath = askopenfilename()
     input = pd.read_csv(filepath)
-    input['Unit'] = input['Channel'] + input['Unit']/10
+    input['Channel Name'] = [i[-2:] for i in input['Channel Name']]
+    input['Channel Name'] = input['Channel Name'].apply(lambda x: float(x))
+    input['Unit'].apply(lambda x: float(x))
+    input['Units'] = input['Channel Name'] + input['Unit']/10
 
     return input
 
