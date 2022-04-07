@@ -19,7 +19,7 @@ def main():
     wash_times.insert(len(wash_times) + 1, max(mySpikes['Timestamp']))
 
     success_window = [0.02, 0.05]
-    xx = np.linspace(-1.5, 0, 25)
+    xx = np.linspace(-1.5, 0, 150)
     yy = {}
     for t in xx:
         yy[t] = [0, 0]
@@ -50,14 +50,16 @@ def main():
                     yy[bin] = [yy[bin][0] + 1, yy[bin][1]]
                 else:
                     yy[bin] = [yy[bin][0], yy[bin][1]  + 1 ]
-
+    fig, ax = plt.subplots()
     for t in yy.keys():
         if yy[t] != [0, 0]:
-            plt.scatter(t, yy[t][0]/sum(yy[t]), s=sum(yy[t])/10, c='black')
-
+            ax.add_patch(Rectangle(xy = (-t, 0), width = 0.01, height = yy[t][0]/sum(yy[t]), color='blue'))
+            ax.add_patch(Rectangle(xy = (-t+0.01, 0), width = 0.01, height = yy[t][1]/sum(yy[t]), color = 'black'))
+            #plt.scatter(t, yy[t][0]/sum(yy[t]), s=sum(yy[t])/10, c='black')
+    ax.set_xlabel('ISI to stimulus of preceding spike')
+    fig.suptitle('P(Light Response | Timing of Preceding Spike)')
+    plt.show()
 
 if __name__ == '__main__':
     main()
-    plt.xlabel('ISI to stimulus of preceding spike')
-    plt.title('P(Light Response | Timing of Preceding Spike)')
-    plt.show()
+
